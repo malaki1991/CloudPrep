@@ -77,7 +77,7 @@ function profilePage() {
     '<button class="btn" type="submit">Guardar nombre</button></form>' +
     '<h2>Respaldo de progreso</h2><p>Exporta tus simulacros y repasos finalizados. En el otro navegador, importa el archivo para añadir los intentos a tu historial.</p>' +
     '<div class="actions"><button class="btn ghost" data-export>Exportar progreso</button>' +
-    '<label for="progress-file">Importar progreso</label><input id="progress-file" type="file" accept=".json,application/json"></div>' +
+    '<button class="btn" type="button" data-import>Importar progreso</button><input id="progress-file" type="file" accept=".json,application/json" hidden></div>' +
     '<p role="status" id="profile-status">' + escapeText(profileNotice) + '</p></section>';
 }
 
@@ -102,6 +102,7 @@ app.addEventListener('change', async event => {
   const file = event.target.files[0];
   if (!file) return;
   event.target.value = '';
+  document.querySelector('#profile-status').textContent = 'Importando progreso…';
   try {
     const count = mergeBackup(JSON.parse(await file.text()));
     profileNotice = count ? 'Intentos importados: ' + count : 'El archivo no contiene intentos nuevos.';

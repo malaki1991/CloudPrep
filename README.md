@@ -48,3 +48,9 @@ La versión publicada carga el contenedor de Google Tag Manager GTM-WRDH8BPC, qu
 En Analytics, consulta **Usuarios totales** para estimar cuántos usuarios visitaron la página. Para identificar el examen más usado, registra `exam_code` como dimensión personalizada de evento y consulta el recuento de `exam_started` por código de examen. Se registra un evento al iniciar un simulacro nuevo. El nombre del perfil y el historial quedan en el navegador. La medición comienza con la publicación de la integración.
 
 [Crear un flujo web en GA4](https://support.google.com/analytics/answer/9304153) · [Crear dimensiones personalizadas](https://support.google.com/analytics/answer/14240153)
+
+## Insignias y temarios
+
+Las insignias de AWS proceden del catálogo de AWS Training and Certification en [Credly](https://www.credly.com/organizations/amazon-web-services/badges). Las tarjetas de Azure usan las insignias por nivel de [Microsoft Learn](https://learn.microsoft.com/en-us/credentials/browse/?credential_types=certification&products=azure). Los logotipos de los proveedores proceden de Wikimedia Commons ([AWS](https://commons.wikimedia.org/wiki/File:Amazon_Web_Services_Logo.svg) y [Azure](https://commons.wikimedia.org/wiki/File:Microsoft_Azure.svg)).
+
+Los simulacros de AZ-104 usan casos de administración de identidades y gobernanza, almacenamiento, cómputo, redes y monitorización. Las preguntas anteriores siguen disponibles en los intentos guardados. [Guía de AZ-104](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/az-104)

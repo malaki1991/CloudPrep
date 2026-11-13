@@ -5,7 +5,7 @@ const dateKey = date => new Intl.DateTimeFormat('sv-SE', {timeZone: zone}).forma
 const stamp = date => new Intl.DateTimeFormat('es-CL', {dateStyle:'medium',timeStyle:'short',timeZone:zone}).format(date);
 const percent = (right,total) => total ? Math.round(100 * right / total) : 0;
 const pct = n => n + '%';
-const questionCount = exams.reduce((sum,e) => sum + e.questions.length,0);
+const questionCount = exams.reduce((sum,e) => sum + e.questions.filter(q => !q.archiveOnly).length,0);
 const byCode = Object.fromEntries(exams.map(e => [e.code,e]));
 const bank = Object.fromEntries(exams.flatMap(e => e.questions).map(q => [q.id,q]));
 const key = 'cloudprep.v1';
@@ -36,7 +36,7 @@ function sampleExam(exam, size, language = 'es') {
   const original = language === 'en' ? [] : exam.questions.filter(q => !q.concept);
   const variants = new Map();
   for (const q of exam.questions) {
-    if (!q.concept) continue;
+    if (!q.concept || q.archiveOnly) continue;
     if (!variants.has(q.concept)) variants.set(q.concept, []);
     variants.get(q.concept).push(q);
   }
@@ -122,21 +122,35 @@ function progress(exam) {
   const seen = new Set();
   for (const attempt of state.attempts) {
     if (attempt.code !== exam.code) continue;
-    for (const item of attempt.items) if (item.right && bank[item.id]) seen.add(item.id);
+    for (const item of attempt.items) if (item.right && bank[item.id] && !bank[item.id].archiveOnly) seen.add(item.id);
   }
-  return percent(seen.size, exam.questions.length);
+  return percent(seen.size, exam.questions.filter(q => !q.archiveOnly).length);
 }
 
 const meter = (value,label) => '<progress class="meter" max="100" value="' + value + '" aria-label="' + escapeText(label) + '"></progress>';
 const button = (label, action, cls='') => '<button class="btn ' + cls + '" ' + action + '>' + label + '</button>';
-const badge = e => '<span class="badge ' + e.provider.toLowerCase() + '">' + e.provider + '</span>';
+function providerIcon(provider) {
+  return '<img class="provider-icon" src="badges/' + provider.toLowerCase() + '.svg" alt="">';
+}
+
+function badge(exam) {
+  return '<span class="badge ' + exam.provider.toLowerCase() + '">' + providerIcon(exam.provider) + exam.provider + '</span>';
+}
+
+function certificationBadge(exam) {
+  const variants = {'DVA-C03':'DVA-C02','MLA-C02':'MLA-C01','SAP-C03':'SAP-C02'};
+  const levels = {Fundamentos:'fundamentals',Asociado:'associate',Experto:'expert',Especialidad:'specialty'};
+  const file = exam.provider === 'AWS' ? (variants[exam.code] || exam.code).toLowerCase() + '.png' :
+    levels[exam.level.split(' · ')[0]] + '.svg';
+  return '<img class="cert-insignia" src="badges/' + file + '" alt="" width="54" height="54" loading="lazy">';
+}
 const empty = (title,desc) => '<div class="blank"><strong>' + title + '</strong>' + desc + '</div>';
 
 function card(e) {
   const value = progress(e);
   const active = state.active?.code === e.code ? state.active : null;
-  return '<article class="cert"><div class="row">' + badge(e) + '<span class="code">' + e.code + '</span></div><h3>' +
-    e.name + '</h3><small class="meta">' + e.level + ' · ' + (e.provider === 'Azure' ? '40–60' : e.size) + ' preguntas · ' + e.duration +
+  return '<article class="cert"><div class="row">' + badge(e) + '<span class="code">' + e.code + '</span></div><div class="cert-title">' +
+    certificationBadge(e) + '<h3>' + e.name + '</h3></div><small class="meta">' + e.level + ' · ' + (e.provider === 'Azure' ? '40–60' : e.size) + ' preguntas · ' + e.duration +
     ' min</small>' + (e.prerequisite ? '<small>' + e.prerequisite + '</small>' : '') +
     '<div class="row subtle"><span>Banco dominado</span><strong>' + pct(value) + '</strong></div>' +
     meter(value,'Banco dominado de ' + e.code) +
@@ -193,7 +207,7 @@ function providerProgress(provider, dates) {
   const coverage = percent(practiced,total);
   const {daily} = analytics(attempts);
   return '<article class="panel provider-panel ' + provider.toLowerCase() + '-progress"><div class="panel-head"><h3>' +
-    provider + '</h3><small>' + (attempts.length ? pct(accuracy(attempts)) + ' de aciertos acumulados' : 'Sin simulacros completados') +
+    providerIcon(provider) + provider + '</h3><small>' + (attempts.length ? pct(accuracy(attempts)) + ' de aciertos acumulados' : 'Sin simulacros completados') +
     '</small></div><div class="row subtle"><span>Certificaciones practicadas</span><strong>' + practiced + '/' + total +
     ' · ' + pct(coverage) + '</strong></div>' + meter(coverage,'Certificaciones practicadas de ' + provider) +
     '<p class="subtle muted">Aciertos diarios · últimos 7 días</p>' + dailyChart(daily,dates) + '</article>';
@@ -392,6 +406,7 @@ app.addEventListener('input', event => {
 app.addEventListener('click', event => {
   const target = event.target.closest('button');
   if (!target) return;
+  if (target.hasAttribute('data-import')) { document.querySelector('#progress-file').click(); return; }
   if (target.hasAttribute('data-export')) { exportProgress(); return; }
   if (target.dataset.review) {
     startReview(target.dataset.review);

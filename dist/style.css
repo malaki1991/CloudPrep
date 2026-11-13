@@ -21,3 +21,7 @@
 .profile h2{margin-bottom:8px}
 .profile input{max-width:100%}
 .sidebar-footer strong{overflow-wrap:anywhere}
+.provider-icon{width:22px;height:18px;object-fit:contain;vertical-align:middle}
+.provider-panel h3,.cert-title{display:flex;align-items:center;gap:10px}
+.cert-insignia{display:block;object-fit:contain;flex:none}
+.profile .actions{justify-content:flex-start}

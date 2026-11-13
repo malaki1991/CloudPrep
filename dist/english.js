@@ -165,4 +165,28 @@ logic|Azure Logic Apps|A team wants to automate an approval process using visual
 apim|Azure API Management|Published APIs need request quotas and policies for clients.|Manages API exposure through a gateway with policies.
 acr|Azure Container Registry|A company needs to store container images in a private registry.|Hosts container artifacts with controlled access.
 appconfig|Azure App Configuration|Several apps need to read feature flags from a common location.|Centralizes application settings and feature flags.
+locks|CanNotDelete lock|A resource group must remain editable while preventing accidental deletion.|Blocks delete operations in the management plane.
+scope|Resource-group role assignment|An operator needs to manage VMs in one resource group without managing the rest of the subscription.|Scopes Azure RBAC permissions to resources in the group.
+policyassign|Azure Policy assignment|A subscription must reject new resources outside approved regions.|Applies a policy definition to a scope.
+budget|Azure Cost Management budget|Finance wants alerts when forecast spending exceeds its monthly limit.|Monitors actual or forecast costs against thresholds.
+sas|User delegation SAS|An app must temporarily share read access to a blob using a signature backed by Microsoft Entra.|Delegates limited Blob Storage access using a user delegation key.
+blobsoft|Blob soft delete|An operator needs to recover an accidentally deleted blob within its retention period.|Retains deleted blobs for a configurable period.
+lifecycle|Blob lifecycle policy|Unused blobs should move to a cheaper tier after a specified number of days.|Automates tier changes or deletions through rules.
+zrs|Zone-redundant storage|An account must keep data copies across zones in the same region.|Synchronously replicates data across availability zones in a region.
+azcopy|AzCopy|A command-line task needs to transfer thousands of local files to a blob container.|Copies files to and from Azure Storage at the command line.
+bicep|Bicep template|A team needs to declare Azure resources and parameters in a reusable file.|Describes declarative infrastructure for Azure Resource Manager.
+extension|Custom Script Extension|A VM needs to download and run a configuration script after deployment.|Runs configuration scripts through the VM agent.
+slot|App Service deployment slot|A team wants to validate a new version at a staging URL before swapping it into production.|Maintains a deployment environment that can be swapped with another slot.
+autoscale|VM Scale Sets autoscale|The instance count must increase when average CPU rises.|Adjusts instance count using metric-based rules.
+peering|Virtual network peering|Two VNets with nonoverlapping address spaces need private IP connectivity over the Azure backbone.|Connects virtual networks over private routes on the backbone.
+udr|User-defined route|A subnet must send outbound traffic through a virtual network appliance as the next hop.|Allows explicit selection of the next hop for a prefix.
+ipflow|IP flow verify|An administrator needs to identify which NSG rule allows or denies a TCP flow to a VM.|Checks the security decision and applicable rule for a specific flow.
+azlb|Azure Load Balancer|Several machines must receive TCP traffic through a frontend IP and health probe.|Distributes layer-four traffic across destinations responding to the probe.
+privdns|Private DNS zone virtual network link|Machines in another VNet need to resolve records in an Azure private DNS zone.|Associates a private zone with a VNet for record resolution.
+diag|Diagnostic setting|Resource logs from a storage account must be sent to Log Analytics.|Routes resource logs and metrics to configured destinations.
+actiongroup|Action group|When an Azure Monitor alert fires, it must email the on-call team.|Defines reusable alert recipients and actions.
+vault|Recovery Services vault|An administrator needs to store and manage recovery points for backed-up virtual machines.|Manages backup items and recovery points for Azure Backup.
+kql|KQL query in Log Analytics|A team needs to filter and aggregate logs from several machines to investigate an incident.|Queries log tables using filtering and aggregation.
+sitefail|Azure Site Recovery failover|A replicated application needs to start its machines in the recovery region during an outage.|Activates replicated workloads in the recovery target.
+restoredisk|VM disk restore|An operator needs to recover disks from a backup point for inspection without replacing the original VM.|Recovers disks as separate resources for inspection or reconstruction.
 `;

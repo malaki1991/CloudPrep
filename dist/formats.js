@@ -17,7 +17,7 @@ const topicOrder = {
   'DOP-C02':'ops dev compute security network', 'AIP-C01':'ai dev security data ops',
   'SCS-C03':'security network ops dev data', 'ANS-C01':'network security compute ops core',
   'AZ-900':'core compute security network data', 'AI-901':'ai data core security',
-  'DP-900':'data core compute security', 'AZ-104':'compute network ops security data',
+  'DP-900':'data core compute security', 'AZ-104':'identity data compute network ops security',
   'AZ-305':'compute network data security ops', 'AZ-700':'network security ops compute',
   'AZ-400':'dev ops security compute', 'AZ-401':'dev ai ops security compute',
   'AZ-140':'desktop compute security network ops', 'AZ-120':'sap compute data network ops',
@@ -59,11 +59,15 @@ function buildPracticeBanks(data) {
     const [size, minutes] = aws ? awsFormats[exam.code] : [50, exam.level === 'Fundamentos' ? 45 : azure120.has(exam.code) ? 120 : 100];
     exam.size = size;
     exam.duration = minutes;
+    if (exam.code === 'AZ-900' || exam.code === 'AZ-104') {
+      exam.url = 'https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/' + exam.code.toLowerCase();
+    }
     const groups = topicOrder[exam.code].split(' ').flatMap(topic => [
       topics[(aws ? 'AWS ' : 'Azure ') + topic] || [],
       topics['Both ' + topic] || []
     ]);
-    for (const facts of groups) {
+    const targeted = topicOrder[exam.code].split(' ').map(topic => topics[exam.code + ' ' + topic]).filter(Boolean);
+    for (const facts of [...groups,...targeted]) {
       for (let index = 0; index < facts.length; index++) {
         const fact = facts[index];
         const near = [1,2,3].map(offset => facts[(index + offset) % facts.length]);
@@ -90,6 +94,7 @@ function buildPracticeBanks(data) {
               choices:[translation[field], ...options.map(option => option[field])],
               reason:translation.term + '. ' + translation.purpose
             },
+            archiveOnly: targeted.length > 0 && !targeted.includes(facts),
             id: exam.code + '-case-' + fact.id + '-' + variant, concept:fact.id,
             area:topicAreas[fact.group], prompt, correct, choices:[correct,...wrong],
             reason:fact.term + '. ' + fact.purpose,
@@ -100,7 +105,3 @@ function buildPracticeBanks(data) {
     }
   }
 }
-
-
-
-

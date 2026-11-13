@@ -195,6 +195,34 @@ logic|Azure Logic Apps|Un equipo quiere automatizar un proceso de aprobación ut
 apim|Azure API Management|Se necesita aplicar límites de solicitudes y políticas a APIs publicadas para clientes.|Administra la exposición de APIs a través de una puerta de enlace con políticas.
 acr|Azure Container Registry|La organización necesita almacenar imágenes de contenedores en un registro privado.|Aloja artefactos e imágenes de contenedores con acceso controlado.
 appconfig|Azure App Configuration|Varias aplicaciones deben consultar indicadores de funciones desde una ubicación común.|Centraliza parámetros y feature flags para aplicaciones.
+# AZ-104 identity
+locks|Bloqueo CanNotDelete|Un grupo de recursos debe seguir permitiendo cambios, pero debe impedir el borrado accidental.|Evita operaciones de eliminación en el plano de administración.
+scope|Rol en el grupo de recursos|Un operador debe administrar máquinas de un solo grupo sin tener acceso de administración al resto de la suscripción.|Limita la asignación de Azure RBAC a los recursos del grupo.
+policyassign|Asignación de Azure Policy|Una suscripción debe rechazar la creación de recursos fuera de las regiones aprobadas.|Aplica una definición de directiva a un ámbito.
+budget|Presupuesto de Azure Cost Management|Finanzas quiere recibir alertas cuando el gasto previsto supere el límite mensual.|Supervisa costos reales o previstos respecto de umbrales.
+# AZ-104 data
+sas|SAS de delegación de usuario|Una aplicación debe compartir temporalmente un blob con permiso de lectura, usando una firma respaldada por Microsoft Entra.|Delega acceso limitado a Blob Storage mediante una clave de delegación de usuario.
+blobsoft|Eliminación temporal de blobs|Un operador debe recuperar un blob eliminado por error durante el período de retención.|Conserva blobs eliminados durante un plazo configurable.
+lifecycle|Directiva de ciclo de vida de blobs|Los blobs sin uso deben pasar a un nivel más económico después de un número de días.|Automatiza cambios de nivel o eliminaciones mediante reglas.
+zrs|Almacenamiento con redundancia de zona|Una cuenta debe mantener copias de datos en varias zonas de la misma región.|Replica sincrónicamente datos entre zonas de disponibilidad de una región.
+azcopy|AzCopy|Una tarea de consola debe transferir miles de archivos locales a un contenedor de blobs.|Copia archivos hacia y desde Azure Storage por línea de comandos.
+# AZ-104 compute
+bicep|Plantilla Bicep|Un equipo necesita declarar recursos y parámetros de Azure en un archivo reutilizable.|Describe infraestructura declarativa para Azure Resource Manager.
+extension|Extensión de script personalizado|Una VM debe descargar y ejecutar un script de configuración tras el despliegue.|Ejecuta scripts de configuración por medio del agente de la máquina virtual.
+slot|Ranura de implementación de App Service|Un equipo quiere validar una nueva versión en una URL de preparación y después intercambiarla con producción.|Mantiene un entorno de implementación que se puede intercambiar con otra ranura.
+autoscale|Escalado automático de VM Scale Sets|El número de instancias de un conjunto debe aumentar cuando sube la CPU promedio.|Ajusta el número de instancias mediante reglas basadas en métricas.
+# AZ-104 network
+peering|Emparejamiento de redes virtuales|Dos VNet con espacios de direcciones distintos necesitan comunicarse por IP privada a través de la red troncal de Azure.|Conecta redes virtuales mediante rutas privadas sobre la red troncal.
+udr|Ruta definida por el usuario|Una subred debe enviar su tráfico saliente a una aplicación virtual de red como siguiente salto.|Permite elegir explícitamente el siguiente salto para un prefijo.
+ipflow|Verificación de flujo IP|Un administrador quiere identificar qué regla de NSG permite o deniega un flujo TCP hacia una VM.|Comprueba el resultado y la regla de seguridad aplicable para un flujo concreto.
+azlb|Azure Load Balancer|Varias máquinas deben recibir tráfico TCP a través de una IP frontal y una sonda de estado.|Distribuye tráfico de capa cuatro entre destinos que responden a la sonda.
+privdns|Vínculo de zona DNS privada|Las máquinas de otra VNet deben resolver los nombres de una zona DNS privada de Azure.|Asocia una zona privada con una red virtual para resolver sus registros.
+# AZ-104 ops
+diag|Configuración de diagnóstico|Los registros de recursos de una cuenta de almacenamiento deben enviarse a Log Analytics.|Enruta registros y métricas de recursos a destinos configurados.
+actiongroup|Grupo de acciones|Cuando se dispara una alerta de Azure Monitor, debe enviarse un correo al equipo de guardia.|Define destinatarios y acciones reutilizables para alertas.
+vault|Almacén de Recovery Services|Un administrador necesita almacenar y administrar puntos de recuperación de máquinas virtuales respaldadas.|Administra elementos y puntos de recuperación para Azure Backup.
+kql|Consulta KQL en Log Analytics|Un equipo debe filtrar y agregar registros de varias máquinas para investigar un incidente.|Permite consultar tablas de registros mediante filtros y agregaciones.
+sitefail|Conmutación de Azure Site Recovery|Una aplicación replicada debe iniciar sus máquinas en la región de recuperación durante una interrupción.|Activa las cargas replicadas en el destino de recuperación.
+restoredisk|Restauración de discos de VM|Un operador necesita recuperar los discos desde un punto de respaldo para examinarlos sin reemplazar la VM original.|Recupera discos como recursos separados para inspección o reconstrucción.
 `;
 buildPracticeBanks(practiceFacts);
-
