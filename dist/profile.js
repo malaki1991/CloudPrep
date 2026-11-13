@@ -4,6 +4,23 @@ const escapeText = value => value.replace(/[&<>"']/g, char => ({
 const validName = name => typeof name === 'string' && name.trim().length > 0 && name.trim().length <= 60;
 const validId = id => typeof id === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(id);
 
+const profileKey = 'cloudprep.profile';
+
+function saveProfileName(name) {
+  try { localStorage.setItem(profileKey,name); }
+  catch { document.querySelector('#storage').hidden = false; }
+}
+
+function restoreProfileName() {
+  try {
+    const name = localStorage.getItem(profileKey);
+    if (validName(name)) state.name = name;
+    else if (validName(state.name)) saveProfileName(state.name);
+  } catch {
+    document.querySelector('#storage').hidden = false;
+  }
+}
+
 function mergeBackup(backup) {
   if (backup?.format !== 'cloudprep-progress' || backup.version !== 1 || !Array.isArray(backup.attempts)) {
     throw new Error('Formato de respaldo incompatible.');
@@ -74,7 +91,7 @@ app.addEventListener('submit', event => {
   }
   const first = !validName(state.name);
   state.name = name;
-  save();
+  saveProfileName(name);
   profileNotice = 'Nombre guardado.';
   if (first && location.hash === '#perfil') location.hash = 'inicio';
   else render();
@@ -95,5 +112,5 @@ app.addEventListener('change', async event => {
   if (status) status.textContent = profileNotice;
 });
 
+restoreProfileName();
 render();
-
