@@ -16,3 +16,8 @@
 @media(max-width:760px){.providers{grid-template-columns:1fr}}
 .topic-review{margin-top:24px}
 .topic-review .skill > small{display:block;margin-top:5px}
+.profile{max-width:680px}
+.profile form{display:grid;gap:10px;justify-items:start;margin-bottom:24px}
+.profile h2{margin-bottom:8px}
+.profile input{max-width:100%}
+.sidebar-footer strong{overflow-wrap:anywhere}

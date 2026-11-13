@@ -95,6 +95,7 @@ function openAttempt(code, language, questions, end, reviewOf = null) {
     items: questions.map(q => ({id:q.id, choices:shuffled(questionText(q,language).choices)}))
   };
   save();
+  if (!reviewOf) trackExam(code);
   location.hash = 'simulacro';
 }
 
@@ -126,7 +127,7 @@ function progress(exam) {
   return percent(seen.size, exam.questions.length);
 }
 
-const meter = (value,label) => '<progress class="meter" max="100" value="' + value + '" aria-label="' + label + '"></progress>';
+const meter = (value,label) => '<progress class="meter" max="100" value="' + value + '" aria-label="' + escapeText(label) + '"></progress>';
 const button = (label, action, cls='') => '<button class="btn ' + cls + '" ' + action + '>' + label + '</button>';
 const badge = e => '<span class="badge ' + e.provider.toLowerCase() + '">' + e.provider + '</span>';
 const empty = (title,desc) => '<div class="blank"><strong>' + title + '</strong>' + desc + '</div>';
@@ -221,7 +222,7 @@ function overview() {
     '<section class="stats" aria-label="Indicadores">' +
     stat('◎','Simulacros completados',attempts.length,days.length + ' días de práctica') +
     stat('↗','Precisión general',attempts.length ? pct(accuracy(attempts)) : '—',deltaLabel) +
-    stat('◇','Área más fuerte',strong?.area || '—',strong ? pct(strong.score) + ' · ' + strong.total + ' preguntas distintas' : 'Mínimo 3 preguntas distintas por área') +
+    stat('◇','Área más fuerte',escapeText(strong?.area || '—'),strong ? pct(strong.score) + ' · ' + strong.total + ' preguntas distintas' : 'Mínimo 3 preguntas distintas por área') +
     '</section><div class="section-head"><h2>Progreso por proveedor</h2></div><section class="providers">' +
     ['AWS','Azure'].map(provider => providerProgress(provider,dates)).join('') +
     '</section><div class="section-head"><h2>Rendimiento general</h2></div>' +
@@ -229,7 +230,7 @@ function overview() {
     '<p class="muted subtle">Porcentaje de aciertos en simulacros completados.</p>' +
     dailyChart(daily,dates) + '</article><article class="panel"><div class="panel-head"><h2>Dominio por área</h2></div>' +
     '<p class="muted subtle">Último resultado de cada pregunta distinta.</p>' +
-    (ranked.length ? ranked.map(s => '<div class="skill"><div class="row"><strong>' + s.area + '</strong><small>' +
+    (ranked.length ? ranked.map(s => '<div class="skill"><div class="row"><strong>' + escapeText(s.area) + '</strong><small>' +
       s.total + ' preg. · ' + pct(s.score) + '</small></div>' + meter(s.score,s.area) + '</div>').join('') :
       empty('Aún no hay resultados','Completa un simulacro para ver tus fortalezas.')) + '</article></section>' +
     '<div class="section-head"><h2>Acceso rápido</h2><a href="#certificaciones">Ver catálogo →</a></div>' +
@@ -313,11 +314,11 @@ function topicsToReview(items, en) {
   const t = (es,english) => en ? english : es;
   return '<section class="topic-review"><h2>' + t('Temas que debes reforzar','Topics to strengthen') + '</h2>' +
     rows.map(([area,topic]) => {
-      const label = en ? (englishAreas[area] || area) : area;
+      const label = en ? (Object.hasOwn(englishAreas,area) ? englishAreas[area] : area) : area;
       const score = percent(topic.right,topic.total);
       const status = topic.right === topic.total ? t('Sin errores','All correct') :
         t('Reforzar','Needs practice') + ' · ' + topic.wrong + t(' incorrectas',' wrong') + ' · ' + topic.blank + t(' sin responder',' unanswered');
-      return '<div class="skill"><div class="row"><strong>' + label + '</strong><small>' +
+      return '<div class="skill"><div class="row"><strong>' + escapeText(label) + '</strong><small>' +
         topic.right + '/' + topic.total + ' · ' + pct(score) + '</small></div>' + meter(score,label) +
         '<small>' + status + '</small></div>';
     }).join('') + '</section>';
@@ -337,8 +338,8 @@ function result(id) {
     (missed ? button(t('Repasar errores','Review mistakes') + ' (' + missed + ')','data-review="' + a.id + '"','ghost') : '') +
     '</div>' + topicsToReview(a.items,en) + '<div class="result-list">' + a.items.map((item,i) => '<details' + (item.right ? '' : ' open') +
       '><summary><strong class="' + (item.right ? 'good' : 'bad') + '">' + (item.right ? t('Correcta','Correct') : item.answer ? t('Incorrecta','Incorrect') : t('Sin responder','Unanswered')) +
-      '</strong> · ' + (i+1) + '. ' + item.prompt + '</summary><p>' + t('Tu respuesta: ','Your answer: ') + (item.answer || '—') +
-      '</p><p><strong>' + t('Respuesta correcta:','Correct answer:') + '</strong> ' + item.correct + '</p><p class="muted">' + item.reason + '</p></details>').join('') +
+      '</strong> · ' + (i+1) + '. ' + escapeText(item.prompt) + '</summary><p>' + t('Tu respuesta: ','Your answer: ') + escapeText(item.answer || '—') +
+      '</p><p><strong>' + t('Respuesta correcta:','Correct answer:') + '</strong> ' + escapeText(item.correct) + '</p><p class="muted">' + escapeText(item.reason) + '</p></details>').join('') +
     '</div></article></div>';
 }
 
@@ -351,15 +352,18 @@ function history() {
 }
 
 function render() {
-  const [page,id] = (location.hash.slice(1) || 'inicio').split('/');
-  const labels = {inicio:'Resumen',certificaciones:'Certificaciones',historial:'Historial',simulacro:'Simulacro',resultado:'Resultado'};
+  const [route,id] = (location.hash.slice(1) || 'inicio').split('/');
+  const page = validName(state.name) ? route : 'perfil';
+  document.querySelector('#sidebar-name').textContent = validName(state.name) ? state.name : 'Mi estudio';
+  const labels = {inicio:'Resumen',certificaciones:'Certificaciones',historial:'Historial',perfil:'Mi perfil',simulacro:'Simulacro',resultado:'Resultado'};
   document.querySelector('#breadcrumb').textContent = 'Mi estudio / ' + (labels[page] || labels.inicio);
   document.querySelector('#today').textContent = new Intl.DateTimeFormat('es-CL',{dateStyle:'full',timeZone:zone}).format(new Date());
   for (const link of document.querySelectorAll('nav a')) {
     if (link.hash === '#' + page) link.setAttribute('aria-current','page');
     else link.removeAttribute('aria-current');
   }
-  if (page === 'certificaciones') {
+  if (page === 'perfil') app.innerHTML = profilePage();
+  else if (page === 'certificaciones') {
     app.innerHTML = catalog();
     for (const [field,value] of Object.entries(filters)) document.querySelector('#' + field).value = value;
     list();
@@ -367,12 +371,12 @@ function render() {
   else if (page === 'simulacro') app.innerHTML = simulator();
   else if (page === 'resultado') app.innerHTML = result(id);
   else app.innerHTML = overview();
-  tick();
+  if (validName(state.name)) tick();
 }
 
 function tick() {
   const active = state.active;
-  if (!active || active.reviewOf) return;
+  if (!validName(state.name) || !active || active.reviewOf) return;
   const seconds = Math.max(0,Math.ceil((active.end-Date.now())/1000));
   if (!seconds) { complete(); return; }
   const clock = document.querySelector('#clock');
@@ -388,6 +392,7 @@ app.addEventListener('input', event => {
 app.addEventListener('click', event => {
   const target = event.target.closest('button');
   if (!target) return;
+  if (target.hasAttribute('data-export')) { exportProgress(); return; }
   if (target.dataset.review) {
     startReview(target.dataset.review);
     return;
@@ -423,10 +428,3 @@ app.addEventListener('click', event => {
 
 window.addEventListener('hashchange', () => { render(); window.scrollTo(0,0); app.focus(); });
 setInterval(tick,500);
-render();
-
-
-
-
-
-
