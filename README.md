@@ -43,8 +43,8 @@ En la versión local, abre **Mi perfil → Exportar progreso**. En la versión d
 
 ## Medir el uso de la versión publicada
 
-CloudPrep admite Google Analytics 4. Para activarlo, crea un flujo web para GitHub Pages, coloca su ID público de medición en `dist/analytics.js` y publica el cambio. Mantén desactivada la medición mejorada del flujo para limitar la recopilación adicional.
+La versión publicada carga el contenedor de Google Tag Manager GTM-WRDH8BPC, que contiene la etiqueta de Google Analytics 4 G-8DV8E5VPDD. Los eventos de examen se envían a esa etiqueta.
 
-En Analytics, consulta **Usuarios totales** para estimar cuántos usuarios visitaron la página. Para identificar el examen más usado, registra `exam_code` como dimensión personalizada de evento y consulta el recuento de `exam_started` por código de examen. Se registra un evento al iniciar un simulacro nuevo. El nombre del perfil y el historial quedan en el navegador. La medición comienza cuando se configura el ID y se publica la app.
+En Analytics, consulta **Usuarios totales** para estimar cuántos usuarios visitaron la página. Para identificar el examen más usado, registra `exam_code` como dimensión personalizada de evento y consulta el recuento de `exam_started` por código de examen. Se registra un evento al iniciar un simulacro nuevo. El nombre del perfil y el historial quedan en el navegador. La medición comienza con la publicación de la integración.
 
 [Crear un flujo web en GA4](https://support.google.com/analytics/answer/9304153) · [Crear dimensiones personalizadas](https://support.google.com/analytics/answer/14240153)
