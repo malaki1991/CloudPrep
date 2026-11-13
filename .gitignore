@@ -1,0 +1,16 @@
+# Configuraci?n de publicaci?n local
+.openai/
+
+# Dependencias y archivos de entorno
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Archivos temporales y de editores
+*.log
+*.tar.gz
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
